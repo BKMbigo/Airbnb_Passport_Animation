@@ -5,10 +5,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 data class Listing(
     val id: Int,
-    @DrawableRes
-    val coverUrl: Int,
-    @DrawableRes
-    val landlordAvatar: Int,
+    @DrawableRes val coverUrl: Int,
+    @DrawableRes val landlordAvatar: Int,
     val landlordName: String,
     val landlordDescription: String,
     val title: String,
