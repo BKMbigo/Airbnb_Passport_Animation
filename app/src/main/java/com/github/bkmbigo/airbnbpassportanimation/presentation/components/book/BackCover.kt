@@ -2,6 +2,7 @@ package com.github.bkmbigo.airbnbpassportanimation.presentation.components.book
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.VerifiedUser
@@ -19,6 +21,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,68 +44,79 @@ internal fun BackCover(
     modifier: Modifier = Modifier,
     isVerified: Boolean = true,
 ) {
-    Column(
+    Surface(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
+        shape = RoundedCornerShape(
+            topStart = 20.dp,
+            bottomStart = 20.dp
+        ),
+        tonalElevation = 8.dp,
+        shadowElevation = 2.dp
     ) {
-        Box(
-            modifier = Modifier
-                .size(84.dp)
+        Column(
+            modifier = Modifier.padding(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
+                    .size(72.dp)
             ) {
-                Image(
-                    painter = painterResource(id = listing.landlordAvatar),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .background(Color.Red)
+                ) {
+//                Image(
+//                    painter = painterResource(id = listing.landlordAvatar),
+//                    contentDescription = null,
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier.fillMaxSize()
+//                )
+                }
+
+                FilledIconButton(
+                    onClick = { },
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = Color(0xFFB40249)
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .fillMaxSize(0.3f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.VerifiedUser,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .fillMaxSize(0.6f)
+                    )
+                }
             }
 
-            FilledIconButton(
-                onClick = { },
-                shape = CircleShape,
-                colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = Color(0xFFB40249)
-                ),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .fillMaxSize(0.35f)
+            Text(
+                text = listing.landlordName,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.VerifiedUser,
+                    imageVector = Icons.Default.Person,
                     contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .fillMaxSize(0.6f)
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Superhost",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp
                 )
             }
-        }
-
-        Text(
-            text = listing.landlordName,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Superhost",
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp
-            )
         }
     }
 }

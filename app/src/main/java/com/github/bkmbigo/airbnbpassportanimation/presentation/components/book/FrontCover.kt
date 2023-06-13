@@ -31,20 +31,12 @@ import com.github.bkmbigo.airbnbpassportanimation.R
 import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimationTheme
 
 @Composable
-fun FrontCover(
+internal fun FrontCover(
     @DrawableRes image: Int,
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier
-            .padding(8.dp)
-            .shadow(
-                elevation = 12.dp,
-                shape = RoundedCornerShape(
-                    topEnd = 20.dp,
-                    bottomEnd = 20.dp
-                )
-            ),
+        modifier = modifier,
         shape = RoundedCornerShape(
             topEnd = 20.dp,
             bottomEnd = 20.dp
@@ -83,13 +75,13 @@ fun FrontCover(
                         .shadow(16.dp, shape = CircleShape)
                         .background(Color.Red)
                 ) {
-                    Image(
-                        painter = painterResource(id = image),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
+//                    Image(
+//                        painter = painterResource(id = image),
+//                        contentDescription = null,
+//                        contentScale = ContentScale.Crop,
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                    )
                 }
             }
         }
