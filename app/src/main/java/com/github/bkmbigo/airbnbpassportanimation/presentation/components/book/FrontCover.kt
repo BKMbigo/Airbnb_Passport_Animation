@@ -40,9 +40,7 @@ internal fun FrontCover(
         shape = RoundedCornerShape(
             topEnd = 20.dp,
             bottomEnd = 20.dp
-        ),
-        tonalElevation = 8.dp,
-        shadowElevation = 2.dp
+        )
     ) {
         Row {
             Box(
@@ -63,25 +61,25 @@ internal fun FrontCover(
 
             Box(
                 modifier = Modifier
-                    .width(104.dp)
+                    .width(120.dp)
                     .fillMaxHeight()
                     .background(Color.Black.copy(alpha = 0.01f))
             ) {
                 Box(
                     modifier = Modifier
-                        .size(76.dp)
+                        .size(84.dp)
                         .clip(CircleShape)
                         .align(Alignment.Center)
                         .shadow(16.dp, shape = CircleShape)
                         .background(Color.Red)
                 ) {
-//                    Image(
-//                        painter = painterResource(id = image),
-//                        contentDescription = null,
-//                        contentScale = ContentScale.Crop,
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                    )
+                    Image(
+                        painter = painterResource(id = image),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                 }
             }
         }

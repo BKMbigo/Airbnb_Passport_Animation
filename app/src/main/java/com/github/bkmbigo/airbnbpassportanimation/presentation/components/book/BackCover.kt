@@ -49,9 +49,7 @@ internal fun BackCover(
         shape = RoundedCornerShape(
             topStart = 20.dp,
             bottomStart = 20.dp
-        ),
-        tonalElevation = 8.dp,
-        shadowElevation = 2.dp
+        )
     ) {
         Column(
             modifier = Modifier.padding(4.dp),
@@ -68,23 +66,22 @@ internal fun BackCover(
                         .clip(CircleShape)
                         .background(Color.Red)
                 ) {
-//                Image(
-//                    painter = painterResource(id = listing.landlordAvatar),
-//                    contentDescription = null,
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.fillMaxSize()
-//                )
+                    Image(
+                        painter = painterResource(id = listing.landlordAvatar),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
 
-                FilledIconButton(
-                    onClick = { },
-                    shape = CircleShape,
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = Color(0xFFB40249)
-                    ),
+                Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .fillMaxSize(0.3f)
+                        .clip(CircleShape)
+                        .background(
+                            color = Color(0xFFB40249)
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.Default.VerifiedUser,
@@ -92,6 +89,7 @@ internal fun BackCover(
                         tint = Color.White,
                         modifier = Modifier
                             .fillMaxSize(0.6f)
+                            .align(Alignment.Center)
                     )
                 }
             }
