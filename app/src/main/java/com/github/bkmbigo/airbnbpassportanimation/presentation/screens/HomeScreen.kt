@@ -54,16 +54,18 @@ fun HomeScreen(
     )
 
     // TODO: Find a better implementation
-    val listingItems = listings.associateWith<Listing, @Composable (onClick: () -> Unit) -> Unit> {
-        @Composable { onClick ->
-            PassportBook(
-                listing = it,
-                onClick = onClick,
-                bookAnimationValue = if (currentListing?.first == it) {
-                    animationValue
-                } else 0f,
-                modifier = Modifier.height(120.dp)
-            )
+    val listingItems = remember(listings) {
+        listings.associateWith<Listing, @Composable (onClick: () -> Unit) -> Unit> {
+            @Composable { onClick ->
+                PassportBook(
+                    listing = it,
+                    onClick = onClick,
+                    bookAnimationValue = if (currentListing?.first == it) {
+                        animationValue
+                    } else 0f,
+                    modifier = Modifier.height(120.dp)
+                )
+            }
         }
     }
 
