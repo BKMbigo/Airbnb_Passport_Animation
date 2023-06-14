@@ -54,7 +54,7 @@ internal fun StatsPage(
     ) {
         Column(
             modifier = Modifier
-                .width(112.dp)
+                .width(90.dp)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
