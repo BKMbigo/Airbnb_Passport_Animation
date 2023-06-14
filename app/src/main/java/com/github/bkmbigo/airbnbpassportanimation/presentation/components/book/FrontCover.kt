@@ -61,13 +61,13 @@ internal fun FrontCover(
 
             Box(
                 modifier = Modifier
-                    .width(120.dp)
+                    .width(90.dp)
                     .fillMaxHeight()
                     .background(Color.Black.copy(alpha = 0.01f))
             ) {
                 Box(
                     modifier = Modifier
-                        .size(84.dp)
+                        .size(72.dp)
                         .clip(CircleShape)
                         .align(Alignment.Center)
                         .shadow(16.dp, shape = CircleShape)

@@ -55,8 +55,7 @@ internal fun StatsPage(
         Column(
             modifier = Modifier
                 .width(112.dp)
-                .fillMaxHeight()
-                .padding(horizontal = 8.dp),
+                .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             StatsElement(
@@ -68,7 +67,13 @@ internal fun StatsPage(
                 title = "Reviews"
             )
 
-            Divider(modifier = Modifier.fillMaxWidth().padding(end = 12.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 12.dp),
+                thickness = 1.dp,
+                color = Color.Black.copy(alpha = 0.4f)
+            )
 
             StatsElement(
                 text = {
@@ -87,7 +92,13 @@ internal fun StatsPage(
                 title = "Rating"
             )
 
-            Divider(modifier = Modifier.fillMaxWidth().padding(end = 12.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 12.dp),
+                thickness = 1.dp,
+                color = Color.Black.copy(alpha = 0.4f)
+            )
 
             StatsElement(
                 text = {
@@ -112,16 +123,14 @@ private fun StatsElement(
         ProvideTextStyle(
             value = LocalTextStyle.current.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
+                fontSize = 11.sp
             )
         ) {
             text()
         }
         Text(
             text = title,
-            fontSize = 10.sp,
-            fontFamily = FontFamily.SansSerif,
-            color = Color.Black
+            fontSize = 8.sp
         )
     }
 }

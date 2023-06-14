@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.book.PassportBook
+import com.github.bkmbigo.airbnbpassportanimation.presentation.screens.HomeScreen
 import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimationTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,10 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    PassportBook(
-                        listing = listings[0],
-                        modifier = Modifier.height(160.dp)
-                    )
+                    HomeScreen()
                 }
             }
         }

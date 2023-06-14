@@ -2,6 +2,7 @@ package com.github.bkmbigo.airbnbpassportanimation.presentation.components.book
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -40,30 +41,20 @@ import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimati
 @Composable
 fun PassportBook(
     listing: Listing,
+    onClick: () -> Unit,
+    bookAnimationValue: Float,
     modifier: Modifier = Modifier
 ) {
-    var isOpen by remember { mutableStateOf(true) }
-
-    val animationValue by animateFloatAsState(
-        targetValue = if (isOpen) 0f else 1f,
-        animationSpec = tween(
-            durationMillis = 1000,
-            easing = LinearOutSlowInEasing
-        ),
-        label = "rotation"
-    )
-
     Box(
         modifier = modifier
             .offset(
-                x = minOf(animationValue, 0.5f) * 240.dp
+                x = minOf(bookAnimationValue, 0.5f) * 180.dp
             )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                isOpen = !isOpen
-            }
+                indication = null,
+                onClick = onClick
+            )
     ) {
 
         Row(
@@ -88,7 +79,7 @@ fun PassportBook(
                 listing = listing,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(120.dp)
+                    .width(90.dp)
                     .padding(start = 16.dp)
             )
         }
@@ -96,7 +87,7 @@ fun PassportBook(
         Box(
             modifier = Modifier
                 .graphicsLayer {
-                    rotationY = animationValue * -180f
+                    rotationY = bookAnimationValue * -180f
                     transformOrigin =
                         TransformOrigin(
                             pivotFractionX = 0.0f,
@@ -104,7 +95,7 @@ fun PassportBook(
                         )
                 }
         ) {
-            if (animationValue < 0.5f) {
+            if (bookAnimationValue < 0.5f) {
                 FrontCover(
                     image = listing.landlordAvatar,
                     modifier = Modifier
@@ -122,7 +113,7 @@ fun PassportBook(
                     listing = listing,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(120.dp)
+                        .width(90.dp)
                         .shadow(
                             elevation = 12.dp,
                             shape = RoundedCornerShape(
@@ -140,6 +131,9 @@ fun PassportBook(
                         .graphicsLayer {
                             rotationY = 180f
                         }
+                        .clickable {
+                            onClick()
+                        }
                 )
             }
         }
@@ -150,10 +144,26 @@ fun PassportBook(
 @Preview
 @Composable
 private fun PreviewPassportBook() {
+
+    var isOpen by remember { mutableStateOf(false) }
+
+    val animationValue by animateFloatAsState(
+        targetValue = if(isOpen) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 3000,
+            easing = FastOutSlowInEasing
+        ),
+        label = "rotation"
+    )
+
     AirbnbPassportAnimationTheme {
         Scaffold {
             PassportBook(
                 listing = listings[0],
+                onClick = {
+                    isOpen = !isOpen
+                },
+                bookAnimationValue = animationValue,
                 modifier = Modifier
                     .height(160.dp)
                     .padding(8.dp)

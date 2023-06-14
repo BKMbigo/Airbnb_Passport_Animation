@@ -58,7 +58,7 @@ internal fun BackCover(
         ) {
             Box(
                 modifier = Modifier
-                    .size(72.dp)
+                    .size(48.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -97,7 +97,7 @@ internal fun BackCover(
             Text(
                 text = listing.landlordName,
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                fontSize = 14.sp
             )
 
             Row(
@@ -106,13 +106,13 @@ internal fun BackCover(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(12.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Superhost",
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp
+                    fontSize = 10.sp
                 )
             }
         }
