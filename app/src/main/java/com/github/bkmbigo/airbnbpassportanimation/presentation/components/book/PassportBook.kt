@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -49,8 +51,11 @@ fun PassportBook(
 
     Box(
         modifier = modifier
-            .width(
-                width = 106.dp + ((bookAnimationValue - 0.5f).coerceAtLeast(0f) * 180.dp)
+            .requiredSize(
+                width = PassportDefaults.ClosedPassportSize.width +
+                        bookAnimationValue * (PassportDefaults.FullOpenPassportSize.width - PassportDefaults.ClosedPassportSize.width),
+                height = PassportDefaults.ClosedPassportSize.height +
+                        bookAnimationValue * (PassportDefaults.FullOpenPassportSize.height - PassportDefaults.ClosedPassportSize.height)
             )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -60,27 +65,32 @@ fun PassportBook(
     ) {
         Row(
             modifier = Modifier
-                .align(Alignment.CenterEnd)
+                .align(Alignment.TopEnd)
+                .size(
+                    width = PassportDefaults.ClosedPassportSize.width +
+                            bookAnimationValue * (PassportDefaults.OpenPassportSize.width - PassportDefaults.ClosedPassportSize.width),
+                    height = PassportDefaults.ClosedPassportSize.height +
+                            bookAnimationValue * (PassportDefaults.OpenPassportSize.height - PassportDefaults.ClosedPassportSize.height),
+                )
                 .shadow(
                     elevation = 12.dp,
                     shape = RoundedCornerShape(
-                        topEnd = 20.dp,
-                        bottomEnd = 20.dp
+                        topEnd = PassportDefaults.PassportCornerSize,
+                        bottomEnd = PassportDefaults.PassportCornerSize
                     )
                 )
                 .background(
-                    color = Color.White,
+                    color = Color.Red,
                     shape = RoundedCornerShape(
-                        topEnd = 20.dp,
-                        bottomEnd = 20.dp
+                        topEnd = PassportDefaults.PassportCornerSize,
+                        bottomEnd = PassportDefaults.PassportCornerSize
                     )
                 )
         ) {
             Surface(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(16.dp)
-//                    .shadow(4.dp)
+                    .width(PassportDefaults.PassportMargin)
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
@@ -95,15 +105,14 @@ fun PassportBook(
             StatsPage(
                 listing = listing,
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .width(90.dp)
+                    .weight(1f, true)
             )
         }
 
         Box(
             modifier = Modifier
                 .offset(
-                    x = (bookAnimationValue - 0.5f).coerceAtLeast(0f) * 180.dp
+                    x = bookAnimationValue * PassportDefaults.OpenPassportPageSize.width
                 )
                 .graphicsLayer {
                     rotationY = bookAnimationValue * -180f
@@ -118,8 +127,12 @@ fun PassportBook(
                 FrontCover(
                     image = listing.landlordAvatar,
                     modifier = Modifier
-                        .width(106.dp)
-                        .fillMaxHeight()
+                        .size(
+                            width = PassportDefaults.ClosedPassportSize.width +
+                                    bookAnimationValue * (PassportDefaults.OpenPassportSize.width - PassportDefaults.ClosedPassportSize.width),
+                            height = PassportDefaults.ClosedPassportSize.height +
+                                    bookAnimationValue * (PassportDefaults.OpenPassportSize.height - PassportDefaults.ClosedPassportSize.height),
+                        )
                         .shadow(
                             elevation = 12.dp,
                             shape = RoundedCornerShape(
@@ -132,20 +145,24 @@ fun PassportBook(
                 BackCover(
                     listing = listing,
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .width(90.dp)
+                        .size(
+                            width = PassportDefaults.ClosedPassportPageSize.width +
+                                    bookAnimationValue * (PassportDefaults.OpenPassportPageSize.width - PassportDefaults.ClosedPassportPageSize.width),
+                            height = PassportDefaults.ClosedPassportPageSize.height +
+                                    bookAnimationValue * (PassportDefaults.OpenPassportPageSize.height - PassportDefaults.ClosedPassportPageSize.height),
+                        )
                         .shadow(
                             elevation = 12.dp,
                             shape = RoundedCornerShape(
-                                topEnd = 20.dp,
-                                bottomEnd = 20.dp
+                                topEnd = PassportDefaults.PassportCornerSize,
+                                bottomEnd = PassportDefaults.PassportCornerSize
                             )
                         )
                         .background(
                             color = Color.White,
                             shape = RoundedCornerShape(
-                                topEnd = 20.dp,
-                                bottomEnd = 20.dp
+                                topEnd = PassportDefaults.PassportCornerSize,
+                                bottomEnd = PassportDefaults.PassportCornerSize
                             )
                         )
                         .graphicsLayer {
@@ -160,12 +177,14 @@ fun PassportBook(
 
         if (bookAnimationValue == 1f) {
             Row(modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.width(90.dp))
+                Spacer(modifier = Modifier.width(PassportDefaults.OpenPassportPageSize.width))
                 Surface(
                     modifier = Modifier
                         .background(Color.White)
-                        .fillMaxHeight()
-                        .width(16.dp)
+                        .size(
+                            width = PassportDefaults.PassportMargin,
+                            height = PassportDefaults.OpenPassportSize.height
+                        )
                 ) {}
             }
         }
@@ -205,7 +224,7 @@ private fun PreviewPassportBook() {
                     modifier = Modifier
                         .height(160.dp)
                         .padding(8.dp)
-                        .align(Alignment.CenterEnd)
+                        .align(Alignment.Center)
                 )
             }
         }

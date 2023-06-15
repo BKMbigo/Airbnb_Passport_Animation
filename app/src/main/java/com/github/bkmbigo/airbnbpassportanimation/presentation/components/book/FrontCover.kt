@@ -46,7 +46,7 @@ internal fun FrontCover(
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(16.dp)
+                    .width(PassportDefaults.PassportMargin)
                     .shadow(4.dp)
                     .background(
                         brush = Brush.horizontalGradient(
@@ -61,8 +61,7 @@ internal fun FrontCover(
 
             Box(
                 modifier = Modifier
-                    .width(90.dp)
-                    .fillMaxHeight()
+                    .size(PassportDefaults.ClosedPassportPageSize)
                     .background(Color.Black.copy(alpha = 0.01f))
             ) {
                 Box(
