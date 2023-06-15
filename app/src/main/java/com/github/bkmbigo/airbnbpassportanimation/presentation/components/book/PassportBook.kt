@@ -76,7 +76,7 @@ fun PassportBook(
                     )
                 )
         ) {
-            Box(
+            Surface(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(16.dp)
@@ -90,14 +90,13 @@ fun PassportBook(
                             )
                         )
                     )
-            )
+            ) {}
 
             StatsPage(
                 listing = listing,
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(90.dp)
-                    .padding(start = 4.dp)
             )
         }
 
@@ -162,7 +161,7 @@ fun PassportBook(
         if (bookAnimationValue == 1f) {
             Row(modifier = Modifier.fillMaxSize()) {
                 Spacer(modifier = Modifier.width(90.dp))
-                Box(
+                Surface(
                     modifier = Modifier
                         .background(Color.White)
                         .fillMaxHeight()

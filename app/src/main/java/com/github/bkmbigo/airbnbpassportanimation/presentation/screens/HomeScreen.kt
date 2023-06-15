@@ -1,38 +1,33 @@
 package com.github.bkmbigo.airbnbpassportanimation.presentation.screens
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentWithReceiverOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LookaheadLayout
 import androidx.compose.ui.layout.LookaheadLayoutScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.bkmbigo.airbnbpassportanimation.Listing
-import com.github.bkmbigo.airbnbpassportanimation.presentation.components.BottomSheet
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.HouseItem
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.SearchField
-import com.github.bkmbigo.airbnbpassportanimation.presentation.components.book.PassportBook
 import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimationTheme
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -42,86 +37,104 @@ import kotlinx.collections.immutable.persistentListOf
 fun HomeScreen(
     listings: List<Listing> = com.github.bkmbigo.airbnbpassportanimation.listings
 ) {
-    var currentListing by remember { mutableStateOf<Pair<Listing, @Composable (onClick: () -> Unit) -> Unit>?>(null) } // Indicates whether a listing is currently open
-
-    val animationValue by animateFloatAsState(
-        targetValue = if (currentListing != null) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 3000,
-            easing = FastOutSlowInEasing
-        ),
-        label = "Current Animation"
-    )
+    var currentListing by remember { mutableStateOf<Int?>(null) } // Indicates whether a listing is currently open
+    val itemsInAnimation by remember { mutableStateOf<PersistentList<Int>>(persistentListOf()) }
 
     // TODO: Find a better implementation
     val listingItems = remember(listings) {
-        listings.associateWith<Listing, @Composable (onClick: () -> Unit) -> Unit> {
-            @Composable { onClick ->
-                PassportBook(
-                    listing = it,
-                    onClick = onClick,
-                    bookAnimationValue = if (currentListing?.first == it) {
-                        animationValue
-                    } else 0f,
-                    modifier = Modifier.height(120.dp)
+        listings.map {
+            movableContentWithReceiverOf<LookaheadLayoutScope, Boolean, Modifier> { animate, modifier ->
+                Box(
+                    modifier = modifier
+                        .size(106.dp, 120.dp)
+                        .padding(4.dp)
+                        .then(
+                            if(animate) {
+                                Modifier.animatePassportPlacement(this)
+                            } else {
+                                Modifier
+                            }
+                        )
+                        .background(Color.Red)
                 )
             }
         }
     }
 
+    val scrollState = rememberScrollState()
 
     LookaheadLayout(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         content = {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                SearchField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = 4.dp,
-                            horizontal = 8.dp
-                        )
-                )
-                // Lazy Column cannot be used
+            scrollState.value
+            Box(modifier = Modifier.fillMaxSize()) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f, true)
-                        .padding(horizontal = 8.dp)
-                        .verticalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    listingItems.forEach { listing ->
-                        HouseItem(
-                            listing = listing.key,
-                            landlordPassport = {
-                                if (currentListing?.first != listing.key) {
-                                    listing.value {
-                                        currentListing = Pair(listing.key, listing.value)
+                    SearchField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                vertical = 4.dp,
+                                horizontal = 4.dp
+                            )
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .verticalScroll(scrollState)
+                    ) {
+                        listings.forEachIndexed { index, listing ->
+                            HouseItem(
+                                listing = listing,
+                                landlordPassport = {
+                                    if (currentListing != index) {
+                                        Box(
+                                            modifier = Modifier
+                                                .clickable(
+                                                    interactionSource = remember { MutableInteractionSource() },
+                                                    indication = null,
+                                                    onClick = {
+                                                        currentListing = index
+                                                    }
+                                                )
+                                        ) {
+                                            listingItems[index](
+                                                true,
+                                                Modifier
+                                            )
+                                        }
                                     }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+
+                currentListing?.let { currentListingIndex ->
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {
+                                    currentListing = null
                                 }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
+                            )
+                    ) {
+                        listingItems[currentListingIndex](
+                            true,
+                            Modifier
                         )
                     }
                 }
-            }
 
-            currentListing?.let {
-                BottomSheet(
-                    listing = it.first,
-                    landlordPassport = {
-                        it.second(
-                            onClick = {
-                                currentListing = null
-                            }
-                        )
-                    },
-                    onDismissRequest = { }
-                )
             }
         },
         measurePolicy = { measurables, constraints ->
