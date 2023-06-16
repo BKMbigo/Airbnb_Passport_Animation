@@ -58,7 +58,7 @@ internal fun BackCover(
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(60.dp)
             ) {
                 Box(
                     modifier = Modifier

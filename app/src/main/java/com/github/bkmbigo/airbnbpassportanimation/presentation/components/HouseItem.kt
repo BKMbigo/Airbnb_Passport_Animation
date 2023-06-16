@@ -4,10 +4,12 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,16 +50,18 @@ import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimati
 @Composable
 fun HouseItem(
     listing: Listing,
-    landlordPassport: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
+            .background(Color.White)
+            .height(HouseItemDefaults.itemHeight),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(400.dp)
+                .height(HouseItemDefaults.houseImageHeight)
                 .clip(RoundedCornerShape(10.dp))
                 .shadow(2.dp, RoundedCornerShape(10.dp))
         ) {
@@ -76,14 +80,6 @@ fun HouseItem(
                     imageVector = Icons.Default.FavoriteBorder,
                     contentDescription = null
                 )
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 16.dp, bottom = 16.dp)
-            ) {
-                landlordPassport()
             }
         }
 
@@ -145,11 +141,17 @@ fun HouseItem(
                 ) {
                     append(" night")
                 }
-            }
+            },
+            modifier = Modifier.padding(bottom = 2.dp)
         )
     }
 }
 
+object HouseItemDefaults {
+    val houseImageHeight = 400.dp
+
+    val itemHeight = 510.dp
+}
 
 
 @Preview
@@ -168,24 +170,20 @@ private fun PreviewHouseItem() {
     )
 
     AirbnbPassportAnimationTheme {
-        HouseItem(
-            listing = listings[0],
-            landlordPassport = {
-                PassportBook(
-                    listing = listings[0],
-                    onClick = {
-                        isOpen = !isOpen
-                    },
-                    bookAnimationValue = animationValue,
-                    modifier = Modifier.height(120.dp)
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 4.dp,
-                    horizontal = 8.dp
-                )
-        )
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color.DarkGray)
+        ) {
+            HouseItem(
+                listing = listings[0],
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(500.dp)
+                    .align(Alignment.Center)
+                    .padding(
+                        vertical = 4.dp,
+                        horizontal = 8.dp
+                    )
+            )
+        }
     }
 }

@@ -122,14 +122,14 @@ private fun StatsElement(
         ProvideTextStyle(
             value = LocalTextStyle.current.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 11.sp
+                fontSize = 14.sp
             )
         ) {
             text()
         }
         Text(
             text = title,
-            fontSize = 8.sp
+            fontSize = 11.sp
         )
     }
 }

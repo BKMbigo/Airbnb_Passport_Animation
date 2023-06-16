@@ -1,6 +1,5 @@
 package com.github.bkmbigo.airbnbpassportanimation.presentation.screens
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.VectorConverter
@@ -21,8 +20,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun Modifier.animatePassportPlacement(
-    lookaheadLayoutScope: LookaheadLayoutScope,
-    isInAnimation: Boolean,
+    lookaheadLayoutScope: LookaheadLayoutScope
 ) = composed {
     var offsetAnimation: Animatable<IntOffset, AnimationVector2D>? by remember {
         mutableStateOf(null)
@@ -87,14 +85,19 @@ fun Modifier.animatePassportPlacement(
                 val placeable = measurable.measure(constraints)
                 layout(placeable.width, placeable.height) {
 
-                    val (x, y) = if (isInAnimation) {
+                    val (x, y) =
                         offsetAnimation?.run {
 //                        Log.i("Look Ahead Layout", "animatePassportPlacement: offset Animation current value is $value")
-                            value - placementOffset
+
+                            // Only animate if the value of x is different
+                            if (value.x != placementOffset.x) {
+                                value - placementOffset
+                            } else {
+                                targetOffset?.let { it - placementOffset } ?: IntOffset(0, 0)
+                            }
+
                         } ?: targetOffset?.let { it - placementOffset } ?: IntOffset(0, 0)
-                    } else {
-                        targetOffset?.let { it - placementOffset } ?: IntOffset(0, 0)
-                    }
+
 
 //                    Log.i("Look Ahead Layout", "animatePassportPlacement: x and y values are: x is $x, while y is $y")
 

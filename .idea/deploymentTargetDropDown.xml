@@ -2,13 +2,26 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="PreviewBackCover">
-        <State />
-      </entry>
       <entry key="PreviewHomeScreen">
-        <State />
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="SERIAL_NUMBER" />
+                  <value value="127.0.0.1:5555" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2023-06-16T13:40:57.987583770Z" />
+        </State>
       </entry>
       <entry key="PreviewHouseItem">
+        <State />
+      </entry>
+      <entry key="PreviewHouseList">
         <State />
       </entry>
       <entry key="PreviewOpenPage">
