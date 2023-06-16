@@ -1,6 +1,5 @@
 package com.github.bkmbigo.airbnbpassportanimation.presentation.screens
 
-import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -42,6 +40,7 @@ import com.github.bkmbigo.airbnbpassportanimation.Listing
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.HouseItem
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.SearchField
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.book.PassportBook
+import com.github.bkmbigo.airbnbpassportanimation.presentation.components.book.PassportDefaults
 import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimationTheme
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -65,24 +64,27 @@ fun HomeScreen(
             movableContentWithReceiverOf<LookaheadLayoutScope, PassportParameters, () -> Unit, Modifier> { parameters, onClick, modifier ->
 
                 val bookAnimationValue by animateFloatAsState(
-                    targetValue = if(parameters.isOpen) 1f else 0f,
+                    targetValue = if (parameters.isOpen) 1f else 0f,
                     animationSpec = tween(
-                        durationMillis = 2000,
+                        durationMillis = 3000,
                         easing = FastOutSlowInEasing
                     ),
                     label = "Passport Animation"
                 )
 
-                PassportBook(
-                    listing = listing,
-                    onClick = onClick,
-                    bookAnimationValue = bookAnimationValue,
+                Box(
                     modifier = modifier
-                        .height(120.dp)
-                        .then(
-                            Modifier.animatePassportPlacement(this, parameters.isAnimating)
-                        )
-                )
+                        .size(PassportDefaults.FullOpenPassportSize)
+                        .animatePassportPlacement(this, parameters.isAnimating)
+                ) {
+                    PassportBook(
+                        listing = listing,
+                        onClick = onClick,
+                        bookAnimationValue = bookAnimationValue,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                    )
+                }
             }
         }
     }
@@ -98,8 +100,7 @@ fun HomeScreen(
     val scrollState = rememberScrollState()
 
     LookaheadLayout(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         content = {
             scrollState.value
             Box(
@@ -139,14 +140,9 @@ fun HomeScreen(
                                             Box(
                                                 modifier = Modifier
                                                     .size(
-                                                        106.dp,
-                                                        120.dp
+                                                        PassportDefaults.FullOpenPassportSize
                                                     )
                                                     .onGloballyPositioned { layoutCoordinates ->
-                                                        Log.i(
-                                                            "Home Screen",
-                                                            "HomeScreen: Global coordinates are: ${layoutCoordinates.positionInRoot().y}"
-                                                        )
                                                         passportPositions = passportPositions
                                                             .set(
                                                                 index,
@@ -175,30 +171,36 @@ fun HomeScreen(
 
                         listings.forEachIndexed { index, listing ->
                             if (currentListing != index) {
-                                listingItems[index](
-                                    PassportParameters(
-                                        isOpen = false,
-                                        isAnimating = itemsInAnimation.contains(index)
-                                    ),
-                                    {
-                                        currentListing = index
-                                        itemsInAnimation =
-                                            itemsInAnimation.add(index)
-                                    },
-                                    Modifier
-                                        .offset {
-                                            passportPositions[index]
-                                        }
-                                        .offset(y = (-72).dp)
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(PassportDefaults.FullOpenPassportSize)
+                                ) {
+                                    listingItems[index](
+                                        PassportParameters(
+                                            isOpen = false,
+                                            isAnimating = itemsInAnimation.contains(index)
+                                        ),
+                                        {
+                                            currentListing = index
+                                            itemsInAnimation =
+                                                itemsInAnimation.add(index)
+                                        },
+                                        Modifier
+                                            .align(Alignment.BottomStart)
+                                            .offset {
+                                                passportPositions[index]
+                                            }
+                                            .offset(y = (-72).dp)
+                                    )
+                                }
                             }
                         }
 
                         currentListing?.let { currentListingIndex ->
                             Box(
                                 modifier = Modifier
-                                    .size(196.dp, 120.dp)
                                     .align(Alignment.Center)
+                                    .size(PassportDefaults.FullOpenPassportSize)
                             ) {
                                 listingItems[currentListingIndex](
                                     PassportParameters(
@@ -214,6 +216,7 @@ fun HomeScreen(
                                         }
                                     },
                                     Modifier
+                                        .align(Alignment.Center)
                                 )
                             }
                         }

@@ -51,7 +51,7 @@ fun PassportBook(
 
     Box(
         modifier = modifier
-            .requiredSize(
+            .size(
                 width = PassportDefaults.ClosedPassportSize.width +
                         bookAnimationValue * (PassportDefaults.FullOpenPassportSize.width - PassportDefaults.ClosedPassportSize.width),
                 height = PassportDefaults.ClosedPassportSize.height +
