@@ -31,6 +31,7 @@ import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimati
 fun HouseList(
     listings: List<Listing>,
     passport: @Composable BoxScope.(index: Int) -> Unit,
+    closingBottomSheet: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState()
 ) {
@@ -51,6 +52,8 @@ fun HouseList(
                 )
             }
         }
+
+        closingBottomSheet()
 
         Column(
             modifier = Modifier
@@ -109,6 +112,7 @@ private fun PreviewHouseList() {
             passport = { index ->
                 passports[index]()
             },
+            closingBottomSheet = {},
             modifier = Modifier.fillMaxSize()
         )
     }

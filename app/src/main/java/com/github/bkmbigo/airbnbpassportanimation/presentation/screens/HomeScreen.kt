@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentWithReceiverOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -26,26 +26,43 @@ import androidx.compose.ui.layout.LookaheadLayoutScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.bkmbigo.airbnbpassportanimation.Listing
+import com.github.bkmbigo.airbnbpassportanimation.presentation.components.BottomSheet
+import com.github.bkmbigo.airbnbpassportanimation.presentation.components.BottomSheetState
+import com.github.bkmbigo.airbnbpassportanimation.presentation.components.BottomSheetTransitionState
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.HouseList
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.SearchField
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.book.PassportBook
 import com.github.bkmbigo.airbnbpassportanimation.presentation.components.book.PassportDefaults
 import com.github.bkmbigo.airbnbpassportanimation.ui.theme.AirbnbPassportAnimationTheme
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     listings: List<Listing> = com.github.bkmbigo.airbnbpassportanimation.listings
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    var currentListing by remember { mutableStateOf<Int?>(null) } // Indicates whether a listing is currently open
-    var itemsInAnimation by remember { mutableStateOf<PersistentList<Int>>(persistentListOf()) }
+    var bottomSheetState by remember { mutableStateOf<BottomSheetState?>(null) }
 
+    val sheetAnimationValue by animateFloatAsState(
+        targetValue = when (bottomSheetState?.currentTransition) {
+            BottomSheetTransitionState.OPENING -> 1f
+            else -> 0f
+        },
+        animationSpec = tween(
+            durationMillis = when (bottomSheetState?.currentTransition) {
+                BottomSheetTransitionState.OPENING -> 2000
+                else -> 1000
+            }
+        ),
+        label = "",
+        finishedListener = { finalValue ->
+            if(finalValue == 0f) {
+                bottomSheetState = null
+            }
+        }
+    )
 
     // TODO: Find a better implementation
     val listingItems = remember(listings) {
@@ -83,12 +100,13 @@ fun HomeScreen(
     LookaheadLayout(
         modifier = Modifier.fillMaxSize(),
         content = {
-            scrollState.value
+            scrollState.value  /*Placed to update LookAhead Layout in case of change in scroll*/
 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
+
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -100,66 +118,99 @@ fun HomeScreen(
                                 horizontal = 4.dp
                             )
                     )
-
-                    Box(
+                    HouseList(
+                        listings = listings,
+                        passport = { index ->
+                            if (
+                                !(bottomSheetState != null &&
+                                        bottomSheetState?.listingIndex == index &&
+                                        bottomSheetState?.currentTransition == BottomSheetTransitionState.OPENING)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                ) {
+                                    listingItems[index](
+                                        PassportParameters(
+                                            isOpen = false
+                                        ),
+                                        {
+                                            bottomSheetState = BottomSheetState(
+                                                listingIndex = index,
+                                                listing = listings[index]
+                                            )
+                                        },
+                                        Modifier
+                                            .align(Alignment.BottomStart)
+                                    )
+                                }
+                            }
+                        },
+                        closingBottomSheet = {
+                            bottomSheetState?.let { sheetState ->
+                                if (
+                                    sheetState.currentTransition == BottomSheetTransitionState.CLOSING
+                                ) {
+                                    BottomSheet(
+                                        sheetState = sheetState,
+                                        animationValue = sheetAnimationValue,
+                                        landlordPassport = { /* no-op */ },
+                                        onDismissRequest = {
+                                            bottomSheetState =
+                                                sheetState.copy(
+                                                    currentTransition = BottomSheetTransitionState.CLOSING
+                                                )
+                                        }
+                                    )
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f, true)
-                    ) {
-                        HouseList(
-                            listings = listings,
-                            passport = { index ->
-                                if (currentListing != index) {
-                                    Box(
-                                        modifier = Modifier
-                                    ) {
-                                        listingItems[index](
-                                            PassportParameters(
-                                                isOpen = false,
-                                                isAnimating = itemsInAnimation.contains(index)
-                                            ),
-                                            {
-                                                currentListing = index
-                                                itemsInAnimation =
-                                                    itemsInAnimation.add(index)
-                                            },
-                                            Modifier
-                                                .align(Alignment.BottomStart)
-                                        )
-                                    }
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            scrollState = scrollState
-                        )
+                            .weight(1f, true),
+                        scrollState = scrollState
+                    )
+                }
+            }
 
-                        currentListing?.let { currentListingIndex ->
+            bottomSheetState?.let { sheetState ->
+                if (
+                    sheetState.currentTransition == BottomSheetTransitionState.OPENING
+                ) {
+                    BottomSheet(
+                        sheetState = sheetState,
+                        animationValue = sheetAnimationValue,
+                        landlordPassport = {
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.Center)
                             ) {
-                                listingItems[currentListingIndex](
+                                listingItems[sheetState.listingIndex](
                                     PassportParameters(
-                                        isOpen = true,
-                                        isAnimating = true
+                                        isOpen = true
                                     ),
                                     {
                                         coroutineScope.launch {
-                                            currentListing = null
-                                            delay(3000)
-                                            itemsInAnimation =
-                                                itemsInAnimation.remove(currentListingIndex)
+                                            bottomSheetState =
+                                                sheetState.copy(
+                                                    currentTransition = BottomSheetTransitionState.CLOSING
+                                                )
                                         }
                                     },
                                     Modifier
                                         .align(Alignment.Center)
                                 )
                             }
+                        },
+                        onDismissRequest = {
+                            bottomSheetState =
+                                sheetState.copy(
+                                    currentTransition = BottomSheetTransitionState.CLOSING
+                                )
                         }
-                    }
+                    )
                 }
             }
+
         },
         measurePolicy = { measurables, constraints ->
             val placeables = measurables.map { it.measure(constraints) }
@@ -173,12 +224,12 @@ fun HomeScreen(
 @Preview
 @Composable
 private fun PreviewHomeScreen() {
+
     AirbnbPassportAnimationTheme {
         HomeScreen()
     }
 }
 
 data class PassportParameters(
-    val isOpen: Boolean,
-    val isAnimating: Boolean
+    val isOpen: Boolean
 )
