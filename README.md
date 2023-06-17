@@ -1,9 +1,13 @@
-## 
+
 
 ###### This is not a tutorial or a showcase. It was just a project I undertook trying to learn more about LookAheadLayout in Jetpack Compose.
 ###### The Project uses Android Gradle Plugin version 8.2.0-alpha08 which may be incompatible with your IDE
 
 ### Screenshots
+
+
+https://github.com/BKMbigo/Airbnb_Passport_Animation/assets/102836149/5e0efdd0-2e68-4910-9bcd-83a1b15ca88e
+
 
 
 ### Method Used
