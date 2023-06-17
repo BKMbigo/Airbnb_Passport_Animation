@@ -2,6 +2,7 @@ package com.github.bkmbigo.airbnbpassportanimation.presentation.screens
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector2D
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +39,7 @@ fun Modifier.animatePassportPlacement(
                     launch {
                         animateTo(
                             target,
-                            animationSpec = tween(3000)
+                            animationSpec = tween(1000, easing = FastOutSlowInEasing)
                         )
                     }
                 } ?: Animatable(target, IntOffset.VectorConverter).let {
