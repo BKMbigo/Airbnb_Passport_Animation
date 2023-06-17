@@ -9,6 +9,12 @@
 https://github.com/BKMbigo/Airbnb_Passport_Animation/assets/102836149/5e0efdd0-2e68-4910-9bcd-83a1b15ca88e
 
 
+###### Scrolling
+
+
+https://github.com/BKMbigo/Airbnb_Passport_Animation/assets/102836149/0aa2208a-b87f-49b4-9f09-db297183d10a
+
+
 
 ### Method Used
 The animation uses [LookAheadLayout](https://twitter.com/doris4lt/status/1531364543305175041) to animate the position of the passport on the screen.
