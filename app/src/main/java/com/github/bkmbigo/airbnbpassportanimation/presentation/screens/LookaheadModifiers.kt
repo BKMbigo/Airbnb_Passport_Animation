@@ -17,6 +17,10 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.layout.LookaheadLayoutScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.round
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -26,6 +30,11 @@ fun Modifier.animatePassportPlacement(
     var offsetAnimation: Animatable<IntOffset, AnimationVector2D>? by remember {
         mutableStateOf(null)
     }
+
+    var previousPosition = remember<IntOffset?> { null }
+    var isAnimationActive = remember { false }
+    var activeAnimationJob = remember<Job?> { null }
+
     var placementOffset: IntOffset by remember { mutableStateOf(IntOffset.Zero) }
     var targetOffset: IntOffset? by remember {
         mutableStateOf(null)
@@ -34,28 +43,40 @@ fun Modifier.animatePassportPlacement(
         snapshotFlow {
             targetOffset
         }.collect { target ->
-            if (target != null && target != offsetAnimation?.targetValue) {
+            if (
+                target != null &&
+                target != offsetAnimation?.targetValue
+            ) {
                 offsetAnimation?.run {
-                    launch {
-                        animateTo(
-                            target,
-                            animationSpec = tween(1000, easing = FastOutSlowInEasing)
-                        )
+                    if (isAnimationActive || target.x != previousPosition?.x) {
+                        isAnimationActive = true
+                        launch {
+                            animateTo(
+                                target,
+                                animationSpec = tween(2000, easing = FastOutSlowInEasing)
+                            )
+                        }
+                        activeAnimationJob?.cancel()
+                        activeAnimationJob = launch {
+                            delay(2000)
+                            if (isActive) {
+                                isAnimationActive = false
+                                cancel()
+                            }
+                        }
+                    } else {
+                        snapTo(target)
                     }
                 } ?: Animatable(target, IntOffset.VectorConverter).let {
                     offsetAnimation = it
                 }
             }
+            previousPosition = target
         }
     }
     with(lookaheadLayoutScope) {
         this@composed
             .onPlaced { lookaheadScopeCoordinates, layoutCoordinates ->
-                // This block of code has the LookaheadCoordinates of the LookaheadLayout
-                // as the receiver. The parameter coordinates is the coordinates of this
-                // modifier.
-                // localLookaheadPositionOf returns the *target* position of this
-                // modifier in the LookaheadLayout's local coordinates.
 
                 targetOffset = lookaheadScopeCoordinates
                     .localLookaheadPositionOf(
@@ -63,34 +84,21 @@ fun Modifier.animatePassportPlacement(
                     )
                     .round()
 
-
-//                Log.i("Look ahead layout", "animatePassportPlacement: new target value is: $targetOffset")
-
-                // localPositionOf returns the *current* position of this
-                // modifier in the LookaheadLayout's local coordinates.
-
                 placementOffset = lookaheadScopeCoordinates
                     .localPositionOf(
                         layoutCoordinates, androidx.compose.ui.geometry.Offset.Zero
                     )
                     .round()
 
-//                Log.i("Look ahead layout", "animatePassportPlacement: new local value is: $placementOffset")
-
             }
-            // The measure logic in `intermediateLayout` is skipped in the lookahead pass, as
-            // intermediateLayout is expected to produce intermediate stages of a layout
-            // transform. When the measure block is invoked after lookahead pass, the lookahead
-            // size of the child will be accessible as a parameter to the measure block.
+
             .intermediateLayout { measurable, constraints, _ ->
                 val placeable = measurable.measure(constraints)
                 layout(placeable.width, placeable.height) {
 
                     val (x, y) =
                         offsetAnimation?.run {
-//                        Log.i("Look Ahead Layout", "animatePassportPlacement: offset Animation current value is $value")
 
-                            // Only animate if the value of x is different
                             if (value.x != placementOffset.x) {
                                 value - placementOffset
                             } else {
@@ -99,8 +107,6 @@ fun Modifier.animatePassportPlacement(
 
                         } ?: targetOffset?.let { it - placementOffset } ?: IntOffset(0, 0)
 
-
-//                    Log.i("Look Ahead Layout", "animatePassportPlacement: x and y values are: x is $x, while y is $y")
 
                     placeable.place(x, y)
 
